@@ -21,5 +21,5 @@ break;
 }
 i++;
 }
-return (sign * num);
+return (sign *num);
 }
