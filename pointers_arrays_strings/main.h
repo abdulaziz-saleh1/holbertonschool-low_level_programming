@@ -21,4 +21,8 @@ char *string_toupper(char *);
 char *cap_string(char *);
 char *leet(char *str);
 char *_memset(char *s, char b, unsigned int n);
+char *_strstr(char *haystack, char *needle);
+char *_strpbrk(char *s, char *accept);
+char *_strchr(char *s, char c);
+
 #endif /* MAIN_H */
