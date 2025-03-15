@@ -24,7 +24,8 @@ d->owner = owner;
  * print_dog - Prints the details of a struct dog.
  * @d: Pointer to the struct dog to print.
  */
-void print_dog(struct dog *d){
+void print_dog(struct dog *d)
+{
 if (d == NULL)
 return;
 printf("Name: %s\n", (d->name) ? d->name : "(nil)");
