@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "3-calc.h"
 
 /**
@@ -41,13 +43,14 @@ return (a * b);
 * @a: First integer.
 * @b: Second integer.
 *
-* Return: Quotient of a and b, or error if division by zero.
+* Return: Quotient of a and b, or exits with 100 if division by zero.
 */
 int op_div(int a, int b)
 {
 if (b == 0)
 {
-return (100);
+printf("Error\n");
+exit(100);
 }
 return (a / b);
 }
@@ -57,13 +60,14 @@ return (a / b);
 * @a: First integer.
 * @b: Second integer.
 *
-* Return: Remainder of a divided by b, or error if division by zero.
+* Return: Remainder of a divided by b, or exits with 100 if division by zero.
 */
 int op_mod(int a, int b)
 {
 if (b == 0)
 {
-return (100);
+printf("Error\n");
+exit(100);
 }
 return (a % b);
 }
