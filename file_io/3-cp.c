@@ -5,27 +5,20 @@
 
 #define BUFFER_SIZE 1024
 
-/**
- * print_error_and_exit - Prints an error message 
- * and exits with a given code.
- * @exit_code: The exit code to use.
- * @message: The error message format.
- * @arg: The argument for the error message.
- */
-void print_error_and_exit(int exit_code, const char *message, const char *arg)
+void print_error_and_exit(int exit_code, const char *format, const char *arg)
 {
-dprintf(STDERR_FILENO, message, arg);
+dprintf(STDERR_FILENO, format, arg);
 dprintf(STDERR_FILENO, "\n");
 exit(exit_code);
 }
 
-/**
- * main - Copies the content of a file to another file.
- * @argc: The number of arguments.
- * @argv: The argument vector.
- *
- * Return: 0 on success, exits with respective error codes on failure.
- */
+void print_error_and_exit_fd(int exit_code, const char *format, int fd)
+{
+dprintf(STDERR_FILENO, format, fd);
+dprintf(STDERR_FILENO, "\n");
+exit(exit_code);
+}
+
 int main(int argc, char *argv[])
 {
 int fd_from, fd_to;
@@ -65,10 +58,10 @@ print_error_and_exit(98, "Error: Can't read from file %s", argv[1]);
 }
 
 if (close(fd_from) == -1)
-print_error_and_exit(100, "Error: Can't close fd %d", "fd_from");
+print_error_and_exit_fd(100, "Error: Can't close fd %d", fd_from);
 
 if (close(fd_to) == -1)
-print_error_and_exit(100, "Error: Can't close fd %d", "fd_to");
+print_error_and_exit_fd(100, "Error: Can't close fd %d", fd_to);
 
 return (0);
 }
