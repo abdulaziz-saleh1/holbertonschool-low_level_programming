@@ -31,27 +31,31 @@ close(fd_from);
 exit(99);
 }
 
-while (1)
+while ((n_read = read(fd_from, buffer, 1024)) > 0)
 {
-n_read = read(fd_from, buffer, 1024);
-if (n_read == -1)
-{
-dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-close(fd_from);
-close(fd_to);
-exit(98);
-}
-if (n_read == 0)
-break;
-
 n_written = write(fd_to, buffer, n_read);
-if (n_written == -1 || n_written != n_read)
+if (n_written == -1)
 {
 dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
 close(fd_from);
 close(fd_to);
 exit(99);
 }
+if (n_written != n_read)
+{
+dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+close(fd_from);
+close(fd_to);
+exit(98);
+}
+}
+
+if (n_read == -1)
+{
+dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+close(fd_from);
+close(fd_to);
+exit(98);
 }
 
 if (close(fd_from) == -1)
