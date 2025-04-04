@@ -1,18 +1,18 @@
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
 
 char *create_buffer(char *file)
 {
 char *buffer;
 
-buffer = malloc(1024);
+buffer = malloc(sizeof(char) * 1024);
 if (buffer == NULL)
 {
 dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
 exit(99);
 }
+
 return (buffer);
 }
 
@@ -47,6 +47,7 @@ dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", av[1]);
 free(buffer);
 exit(98);
 }
+
 fd_to = open(av[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 if (fd_to == -1)
 {
@@ -84,3 +85,4 @@ close_file(fd_to);
 
 return (0);
 }
+
