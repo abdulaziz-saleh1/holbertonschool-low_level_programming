@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
-
-#define BUFFER_SIZE 1024
+#include <fcntl.h>
 
 char *create_buffer(char *file)
 {
-char *buffer = malloc(sizeof(char) * BUFFER_SIZE);
+char *buffer;
+
+buffer = malloc(1024);
 if (buffer == NULL)
 {
 dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
@@ -18,7 +18,9 @@ return (buffer);
 
 void close_file(int fd)
 {
-int c = close(fd);
+int c;
+
+c = close(fd);
 if (c == -1)
 {
 dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
@@ -26,7 +28,7 @@ exit(100);
 }
 }
 
-int main(int ac, char **av)
+int main(int ac, char *av[])
 {
 int fd_from, fd_to, r, w;
 char *buffer;
@@ -45,7 +47,6 @@ dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", av[1]);
 free(buffer);
 exit(98);
 }
-
 fd_to = open(av[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 if (fd_to == -1)
 {
@@ -55,7 +56,7 @@ close_file(fd_from);
 exit(99);
 }
 
-while ((r = read(fd_from, buffer, BUFFER_SIZE)) > 0)
+while ((r = read(fd_from, buffer, 1024)) > 0)
 {
 w = write(fd_to, buffer, r);
 if (w != r)
@@ -80,5 +81,6 @@ exit(98);
 free(buffer);
 close_file(fd_from);
 close_file(fd_to);
+
 return (0);
 }
