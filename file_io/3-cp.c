@@ -22,6 +22,14 @@ dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
 exit(98);
 }
 
+bytes_read = read(fd_from, buffer, 1024);
+if (bytes_read == -1)
+{
+dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+close(fd_from);
+exit(98);
+}
+
 fd_to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 if (fd_to == -1)
 {
@@ -30,7 +38,7 @@ close(fd_from);
 exit(99);
 }
 
-while ((bytes_read = read(fd_from, buffer, sizeof(buffer))) > 0)
+while (bytes_read > 0)
 {
 bytes_written = write(fd_to, buffer, bytes_read);
 if (bytes_written == -1 || bytes_written != bytes_read)
@@ -40,14 +48,14 @@ close(fd_from);
 close(fd_to);
 exit(99);
 }
-}
-
+bytes_read = read(fd_from, buffer, 1024);
 if (bytes_read == -1)
 {
 dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
 close(fd_from);
 close(fd_to);
 exit(98);
+}
 }
 
 if (close(fd_from) == -1)
