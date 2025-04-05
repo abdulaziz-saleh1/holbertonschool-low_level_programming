@@ -1,23 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include "main.h"
 
 /**
- * print_error - Prints an error message to STDERR and exits.
- * @code: Exit code.
- * @msg: Error message format.
- * @arg: Argument to print.
+ * print_error - Prints an error message and exits with the given code.
+ * @exit_code: The code to exit with.
+ * @msg: The error message format string.
+ * @arg: Argument for the format string.
  */
-void print_error(int code, const char *msg, const char *arg)
+void print_error(int exit_code, const char *msg, const char *arg)
 {
 	dprintf(STDERR_FILENO, msg, arg);
 	dprintf(STDERR_FILENO, "\n");
-	exit(code);
+	exit(exit_code);
 }
 
 /**
- * close_fd - Closes a file descriptor and handles error.
+ * close_fd - Closes a file descriptor and handles error if any.
  * @fd: File descriptor to close.
  */
 void close_fd(int fd)
@@ -30,14 +27,14 @@ void close_fd(int fd)
 }
 
 /**
- * copy_file - Copies content from one file to another.
+ * copy_file - Copies content from file_from to file_to.
  * @file_from: Source file.
  * @file_to: Destination file.
  */
 void copy_file(const char *file_from, const char *file_to)
 {
 	int fd_from, fd_to;
-	ssize_t r, w;
+	ssize_t bytes_read, bytes_written;
 	char buffer[1024];
 
 	fd_from = open(file_from, O_RDONLY);
@@ -51,22 +48,18 @@ void copy_file(const char *file_from, const char *file_to)
 		print_error(99, "Error: Can't write to %s", file_to);
 	}
 
-	while ((r = read(fd_from, buffer, 1024)) > 0)
+	while ((bytes_read = read(fd_from, buffer, 1024)) > 0)
 	{
-		w = write(fd_to, buffer, r);
-		if (w == -1 || w != r)
+		bytes_written = write(fd_to, buffer, bytes_read);
+		if (bytes_written == -1 || bytes_written != bytes_read)
 		{
 			close_fd(fd_from);
 			close_fd(fd_to);
-
-			if (access(file_to, W_OK) == -1)
-				print_error(98, "Error: Can't read from file %s", file_to);
-			else
-				print_error(99, "Error: Can't write to %s", file_to);
+			print_error(99, "Error: Can't write to %s", file_to);
 		}
 	}
 
-	if (r == -1)
+	if (bytes_read == -1)
 	{
 		close_fd(fd_from);
 		close_fd(fd_to);
@@ -81,7 +74,8 @@ void copy_file(const char *file_from, const char *file_to)
  * main - Entry point.
  * @argc: Argument count.
  * @argv: Argument vector.
- * Return: 0 if success.
+ *
+ * Return: 0 on success.
  */
 int main(int argc, char *argv[])
 {
@@ -92,5 +86,6 @@ int main(int argc, char *argv[])
 	}
 
 	copy_file(argv[1], argv[2]);
+
 	return (0);
 }
