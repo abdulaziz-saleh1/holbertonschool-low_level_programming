@@ -45,6 +45,13 @@ int main(int argc, char *argv[])
 	if (fd_from == -1)
 		print_error(98, "Error: Can't read from file %s", argv[1]);
 
+	bytes_read = read(fd_from, buffer, 1024);
+	if (bytes_read == -1)
+	{
+		close_fd(fd_from);
+		print_error(98, "Error: Can't read from file %s", argv[1]);
+	}
+
 	fd_to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
 	if (fd_to == -1)
 	{
@@ -52,7 +59,7 @@ int main(int argc, char *argv[])
 		print_error(99, "Error: Can't write to %s", argv[2]);
 	}
 
-	while ((bytes_read = read(fd_from, buffer, 1024)) > 0)
+	while (bytes_read > 0)
 	{
 		bytes_written = write(fd_to, buffer, bytes_read);
 		if (bytes_written == -1 || bytes_written != bytes_read)
@@ -61,13 +68,14 @@ int main(int argc, char *argv[])
 			close_fd(fd_to);
 			print_error(99, "Error: Can't write to %s", argv[2]);
 		}
-	}
 
-	if (bytes_read == -1)
-	{
-		close_fd(fd_from);
-		close_fd(fd_to);
-		print_error(98, "Error: Can't read from file %s", argv[1]);
+		bytes_read = read(fd_from, buffer, 1024);
+		if (bytes_read == -1)
+		{
+			close_fd(fd_from);
+			close_fd(fd_to);
+			print_error(98, "Error: Can't read from file %s", argv[1]);
+		}
 	}
 
 	close_fd(fd_from);
