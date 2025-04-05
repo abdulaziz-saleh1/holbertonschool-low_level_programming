@@ -30,8 +30,19 @@ close(fd_from);
 exit(99);
 }
 
-while ((bytes_read = read(fd_from, buffer, sizeof(buffer))) > 0)
+while (1)
 {
+bytes_read = read(fd_from, buffer, sizeof(buffer));
+if (bytes_read == -1)
+{
+dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+close(fd_from);
+close(fd_to);
+exit(98);
+}
+if (bytes_read == 0)
+break;
+
 bytes_written = write(fd_to, buffer, bytes_read);
 if (bytes_written == -1 || bytes_written != bytes_read)
 {
@@ -40,14 +51,6 @@ close(fd_from);
 close(fd_to);
 exit(99);
 }
-}
-
-if (bytes_read == -1)
-{
-dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-close(fd_from);
-close(fd_to);
-exit(98);
 }
 
 if (close(fd_from) == -1)
@@ -64,3 +67,4 @@ exit(100);
 
 return (0);
 }
+
