@@ -1,21 +1,21 @@
 #include "main.h"
 
 /**
- * print_error - Prints error to STDERR and exits with code.
- * @code: Exit code.
- * @msg: Format string.
- * @arg: Argument.
+ * print_error - Print an error message and exit with code
+ * @exit_code: The exit code to use
+ * @format: Format of the error message
+ * @arg: Argument for the format
  */
-void print_error(int code, const char *msg, const char *arg)
+void print_error(int exit_code, const char *format, const char *arg)
 {
-	dprintf(STDERR_FILENO, msg, arg);
+	dprintf(STDERR_FILENO, format, arg);
 	dprintf(STDERR_FILENO, "\n");
-	exit(code);
+	exit(exit_code);
 }
 
 /**
- * close_fd - Closes a file descriptor with error handling.
- * @fd: File descriptor to close.
+ * close_fd - Close a file descriptor with error check
+ * @fd: The file descriptor to close
  */
 void close_fd(int fd)
 {
@@ -27,9 +27,9 @@ void close_fd(int fd)
 }
 
 /**
- * copy_file - Copies the content of one file to another.
- * @file_from: Source file name.
- * @file_to: Destination file name.
+ * copy_file - Copy contents from one file to another
+ * @file_from: Source file
+ * @file_to: Destination file
  */
 void copy_file(const char *file_from, const char *file_to)
 {
@@ -71,17 +71,19 @@ void copy_file(const char *file_from, const char *file_to)
 }
 
 /**
- * main - Entry point.
- * @argc: Argument count.
- * @argv: Argument values.
- * Return: 0 if successful.
+ * main - Entry point, check args and call copy_file
+ * @argc: Argument count
+ * @argv: Argument vector
+ * Return: 0 on success, exits with error code otherwise
  */
 int main(int argc, char *argv[])
 {
 	if (argc != 3)
-		print_error(97, "Usage: cp file_from file_to", "");
+	{
+		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+		exit(97);
+	}
 
 	copy_file(argv[1], argv[2]);
-
 	return (0);
 }
