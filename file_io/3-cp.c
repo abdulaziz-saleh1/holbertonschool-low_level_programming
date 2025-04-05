@@ -1,10 +1,10 @@
 #include "main.h"
 
 /**
- * print_error - Prints formatted error and exits.
- * @code: Exit code.
- * @msg: Format string.
- * @arg: File name or argument.
+ * print_error - Prints error to stderr and exits with given code
+ * @code: Exit code
+ * @msg: Error message format
+ * @arg: Argument (file name)
  */
 void print_error(int code, const char *msg, const char *arg)
 {
@@ -14,8 +14,8 @@ void print_error(int code, const char *msg, const char *arg)
 }
 
 /**
- * close_fd - Closes a file descriptor and checks for errors.
- * @fd: File descriptor.
+ * close_fd - Closes a file descriptor
+ * @fd: File descriptor to close
  */
 void close_fd(int fd)
 {
@@ -27,10 +27,10 @@ void close_fd(int fd)
 }
 
 /**
- * main - Copies content from one file to another.
- * @argc: Number of arguments.
- * @argv: Arguments.
- * Return: 0 if successful, exits with error codes otherwise.
+ * main - Entry point
+ * @argc: Argument count
+ * @argv: Argument vector
+ * Return: 0 on success
  */
 int main(int argc, char *argv[])
 {
