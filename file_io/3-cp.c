@@ -4,21 +4,16 @@
 
 /**
  * close_files - Closes two file descriptors.
- * @fd_from: First file descriptor (source).
- * @fd_to: Second file descriptor (destination).
- *
- * Return: Nothing. Exits with code 100 on failure.
+ * @fd_from: Source file descriptor.
+ * @fd_to: Destination file descriptor.
  */
 void close_files(int fd_from, int fd_to)
 {
 	if (fd_from != -1 && close(fd_from) == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_from);
-		if (fd_to != -1)
-			close(fd_to);
 		exit(100);
 	}
-
 	if (fd_to != -1 && close(fd_to) == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_to);
@@ -27,17 +22,15 @@ void close_files(int fd_from, int fd_to)
 }
 
 /**
- * copy_file - Copies the content of a file to another file.
- * @file_from: Name of the source file.
- * @file_to: Name of the destination file.
- *
- * Return: Nothing. Exits with specific code on failure.
+ * copy_file - Copies contents from one file to another.
+ * @file_from: Source file.
+ * @file_to: Destination file.
  */
 void copy_file(const char *file_from, const char *file_to)
 {
-	int fd_from = -1, fd_to = -1;
-	char buffer[BUFFER_SIZE];
+	int fd_from, fd_to;
 	ssize_t bytes_read, bytes_written;
+	char buffer[BUFFER_SIZE];
 
 	fd_from = open(file_from, O_RDONLY);
 	if (fd_from == -1)
@@ -76,11 +69,10 @@ void copy_file(const char *file_from, const char *file_to)
 }
 
 /**
- * main - Entry point for the cp program.
- * @argc: Argument count.
- * @argv: Argument vector.
- *
- * Return: 0 on success, exits with specific code on failure.
+ * main - Entry point
+ * @argc: Argument count
+ * @argv: Argument values
+ * Return: 0 on success, exit otherwise
  */
 int main(int argc, char *argv[])
 {
