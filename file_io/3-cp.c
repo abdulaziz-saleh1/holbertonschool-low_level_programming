@@ -11,14 +11,15 @@
  */
 void close_files(int fd_from, int fd_to)
 {
-	if (close(fd_from) == -1)
+	if (fd_from != -1 && close(fd_from) == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_from);
-		close(fd_to);
+		if (fd_to != -1)
+			close(fd_to);
 		exit(100);
 	}
 
-	if (close(fd_to) == -1)
+	if (fd_to != -1 && close(fd_to) == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_to);
 		exit(100);
@@ -34,7 +35,7 @@ void close_files(int fd_from, int fd_to)
  */
 void copy_file(const char *file_from, const char *file_to)
 {
-	int fd_from, fd_to;
+	int fd_from = -1, fd_to = -1;
 	char buffer[BUFFER_SIZE];
 	ssize_t bytes_read, bytes_written;
 
@@ -49,7 +50,7 @@ void copy_file(const char *file_from, const char *file_to)
 	if (fd_to == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
-		close(fd_from);
+		close_files(fd_from, -1);
 		exit(99);
 	}
 
@@ -59,8 +60,7 @@ void copy_file(const char *file_from, const char *file_to)
 		if (bytes_written != bytes_read)
 		{
 			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
-			close(fd_from);
-			close(fd_to);
+			close_files(fd_from, fd_to);
 			exit(99);
 		}
 	}
@@ -68,8 +68,7 @@ void copy_file(const char *file_from, const char *file_to)
 	if (bytes_read == -1)
 	{
 		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
-		close(fd_from);
-		close(fd_to);
+		close_files(fd_from, fd_to);
 		exit(98);
 	}
 
