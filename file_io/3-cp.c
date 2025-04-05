@@ -14,7 +14,7 @@ void print_error(int code, const char *msg, const char *arg)
 }
 
 /**
- * close_fd - Closes a file descriptor and checks for errors.
+ * close_fd - Closes a file descriptor and handles errors.
  * @fd: File descriptor.
  */
 void close_fd(int fd)
@@ -27,9 +27,9 @@ void close_fd(int fd)
 }
 
 /**
- * copy_file - Copies content from one file to another.
- * @file_from: Source file path.
- * @file_to: Destination file path.
+ * copy_file - Copies content from file_from to file_to.
+ * @file_from: Name of the source file.
+ * @file_to: Name of the destination file.
  */
 void copy_file(const char *file_from, const char *file_to)
 {
@@ -71,10 +71,11 @@ void copy_file(const char *file_from, const char *file_to)
 }
 
 /**
- * main - Entry point. Handles arguments.
+ * main - Entry point. Validates arguments and starts copy.
  * @argc: Argument count.
  * @argv: Argument vector.
- * Return: 0 on success, error otherwise.
+ *
+ * Return: 0 on success.
  */
 int main(int argc, char *argv[])
 {
