@@ -1,10 +1,10 @@
 #include "main.h"
 
 /**
- * print_error - Prints an error message to STDERR and exits.
+ * print_error - Prints error message and exits with code.
  * @code: Exit code.
- * @msg: Error message format string.
- * @arg: Argument to include in the message.
+ * @msg: Format message.
+ * @arg: Argument for message.
  */
 void print_error(int code, const char *msg, const char *arg)
 {
@@ -14,7 +14,7 @@ void print_error(int code, const char *msg, const char *arg)
 }
 
 /**
- * close_fd - Closes a file descriptor and handles errors.
+ * close_fd - Closes file descriptor with error handling.
  * @fd: File descriptor to close.
  */
 void close_fd(int fd)
@@ -27,11 +27,10 @@ void close_fd(int fd)
 }
 
 /**
- * main - Copies the content of a file to another.
+ * main - Copies content from one file to another.
  * @argc: Argument count.
  * @argv: Argument vector.
- *
- * Return: 0 on success, exits with error code on failure.
+ * Return: 0 if successful.
  */
 int main(int argc, char *argv[])
 {
@@ -56,7 +55,7 @@ int main(int argc, char *argv[])
 	while ((bytes_read = read(fd_from, buffer, 1024)) > 0)
 	{
 		bytes_written = write(fd_to, buffer, bytes_read);
-		if (bytes_written != bytes_read)
+		if (bytes_written == -1 || bytes_written != bytes_read)
 		{
 			close_fd(fd_from);
 			close_fd(fd_to);
