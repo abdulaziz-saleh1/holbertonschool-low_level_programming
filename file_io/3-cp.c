@@ -1,24 +1,22 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include "main.h"
+#define BUFFER_SIZE 1024
 
 /**
- * print_error - Prints error message to STDERR and exits.
- * @exit_code: Code to exit with.
- * @format: Error message format.
- * @arg: Argument for format.
+ * print_error - Prints error and exits.
+ * @code: Exit code.
+ * @msg: Error message.
+ * @arg: File name.
  */
-void print_error(int exit_code, const char *format, const char *arg)
+void print_error(int code, const char *msg, const char *arg)
 {
-	dprintf(STDERR_FILENO, format, arg);
+	dprintf(STDERR_FILENO, msg, arg);
 	dprintf(STDERR_FILENO, "\n");
-	exit(exit_code);
+	exit(code);
 }
 
 /**
- * close_fd - Closes a file descriptor and exits if it fails.
- * @fd: The file descriptor to close.
+ * close_fd - Closes a file descriptor and checks for errors.
+ * @fd: The file descriptor.
  */
 void close_fd(int fd)
 {
@@ -30,22 +28,19 @@ void close_fd(int fd)
 }
 
 /**
- * main - Copy the content of one file to another.
+ * main - Copies the contents of one file to another.
  * @argc: Argument count.
- * @argv: Argument values.
+ * @argv: Argument vector.
  * Return: 0 on success, exits with code on failure.
  */
 int main(int argc, char *argv[])
 {
 	int fd_from, fd_to;
 	ssize_t r, w;
-	char buffer[1024];
+	char buffer[BUFFER_SIZE];
 
 	if (argc != 3)
-	{
-		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
-		exit(97);
-	}
+		print_error(97, "Usage: cp file_from file_to", "");
 
 	fd_from = open(argv[1], O_RDONLY);
 	if (fd_from == -1)
@@ -58,16 +53,17 @@ int main(int argc, char *argv[])
 		print_error(99, "Error: Can't write to %s", argv[2]);
 	}
 
-	while ((r = read(fd_from, buffer, 1024)) > 0)
+	while ((r = read(fd_from, buffer, BUFFER_SIZE)) > 0)
 	{
 		w = write(fd_to, buffer, r);
-		if (w == -1 || w != r)
+		if (w != r)
 		{
 			close_fd(fd_from);
 			close_fd(fd_to);
 			print_error(99, "Error: Can't write to %s", argv[2]);
 		}
 	}
+
 	if (r == -1)
 	{
 		close_fd(fd_from);
