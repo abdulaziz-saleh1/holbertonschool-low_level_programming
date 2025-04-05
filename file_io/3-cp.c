@@ -8,7 +8,10 @@
  */
 void print_error(int code, const char *msg, const char *arg)
 {
-	dprintf(STDERR_FILENO, msg, arg);
+	if (arg)
+		dprintf(STDERR_FILENO, msg, arg);
+	else
+		dprintf(STDERR_FILENO, "%s", msg);
 	dprintf(STDERR_FILENO, "\n");
 	exit(code);
 }
@@ -27,7 +30,7 @@ void close_fd(int fd)
 }
 
 /**
- * copy_file_content - Handles the actual file copying logic.
+ * copy_file_content - Copies content from one file to another.
  * @file_from: Source file path.
  * @file_to: Destination file path.
  */
@@ -41,6 +44,13 @@ void copy_file_content(const char *file_from, const char *file_to)
 	if (fd_from == -1)
 		print_error(98, "Error: Can't read from file %s", file_from);
 
+	bytes_read = read(fd_from, buffer, 1024);
+	if (bytes_read == -1)
+	{
+		close_fd(fd_from);
+		print_error(98, "Error: Can't read from file %s", file_from);
+	}
+
 	fd_to = open(file_to, O_CREAT | O_WRONLY | O_TRUNC, 0664);
 	if (fd_to == -1)
 	{
@@ -48,7 +58,7 @@ void copy_file_content(const char *file_from, const char *file_to)
 		print_error(99, "Error: Can't write to %s", file_to);
 	}
 
-	while ((bytes_read = read(fd_from, buffer, 1024)) > 0)
+	while (bytes_read > 0)
 	{
 		bytes_written = write(fd_to, buffer, bytes_read);
 		if (bytes_written == -1 || bytes_written != bytes_read)
@@ -57,13 +67,13 @@ void copy_file_content(const char *file_from, const char *file_to)
 			close_fd(fd_to);
 			print_error(99, "Error: Can't write to %s", file_to);
 		}
-	}
-
-	if (bytes_read == -1)
-	{
-		close_fd(fd_from);
-		close_fd(fd_to);
-		print_error(98, "Error: Can't read from file %s", file_from);
+		bytes_read = read(fd_from, buffer, 1024);
+		if (bytes_read == -1)
+		{
+			close_fd(fd_from);
+			close_fd(fd_to);
+			print_error(98, "Error: Can't read from file %s", file_from);
+		}
 	}
 
 	close_fd(fd_from);
@@ -71,17 +81,17 @@ void copy_file_content(const char *file_from, const char *file_to)
 }
 
 /**
- * main - Entry point. Validates arguments and initiates copy.
+ * main - Entry point. Handles arguments.
  * @argc: Argument count.
  * @argv: Argument vector.
- * Return: 0 on success.
+ *
+ * Return: 0 on success, error otherwise.
  */
 int main(int argc, char *argv[])
 {
 	if (argc != 3)
-		print_error(97, "Usage: cp file_from file_to", "");
+		print_error(97, "Usage: cp file_from file_to", NULL);
 
 	copy_file_content(argv[1], argv[2]);
-
 	return (0);
 }
