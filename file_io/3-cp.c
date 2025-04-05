@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
@@ -30,15 +30,8 @@ close(fd_from);
 exit(99);
 }
 
-while ((bytes_read = read(fd_from, buffer, 1024)) != 0)
+while ((bytes_read = read(fd_from, buffer, sizeof(buffer))) > 0)
 {
-if (bytes_read == -1)
-{
-dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-close(fd_from);
-close(fd_to);
-exit(98);
-}
 bytes_written = write(fd_to, buffer, bytes_read);
 if (bytes_written == -1 || bytes_written != bytes_read)
 {
@@ -47,6 +40,14 @@ close(fd_from);
 close(fd_to);
 exit(99);
 }
+}
+
+if (bytes_read == -1)
+{
+dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+close(fd_from);
+close(fd_to);
+exit(98);
 }
 
 if (close(fd_from) == -1)
