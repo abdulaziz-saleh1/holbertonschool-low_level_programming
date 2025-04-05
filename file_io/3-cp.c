@@ -3,6 +3,29 @@
 #define BUFFER_SIZE 1024
 
 /**
+ * close_files - Closes two file descriptors.
+ * @fd_from: First file descriptor (source).
+ * @fd_to: Second file descriptor (destination).
+ *
+ * Return: Nothing. Exits with code 100 on failure.
+ */
+void close_files(int fd_from, int fd_to)
+{
+	if (close(fd_from) == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_from);
+		close(fd_to);
+		exit(100);
+	}
+
+	if (close(fd_to) == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_to);
+		exit(100);
+	}
+}
+
+/**
  * copy_file - Copies the content of a file to another file.
  * @file_from: Name of the source file.
  * @file_to: Name of the destination file.
@@ -50,18 +73,7 @@ void copy_file(const char *file_from, const char *file_to)
 		exit(98);
 	}
 
-	if (close(fd_from) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_from);
-		close(fd_to);
-		exit(100);
-	}
-
-	if (close(fd_to) == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd_to);
-		exit(100);
-	}
+	close_files(fd_from, fd_to);
 }
 
 /**

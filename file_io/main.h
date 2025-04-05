@@ -17,5 +17,6 @@ int append_text_to_file(const char *filename, char *text_content);
 void print_error(int code, const char *msg, const char *arg);
 void close_fd(int fd);
 void copy_file(const char *file_from, const char *file_to);
+void close_files(int fd_from, int fd_to);
 
 #endif
